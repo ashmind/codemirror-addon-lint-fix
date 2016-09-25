@@ -9,8 +9,51 @@
   background-repeat: no-repeat;
   display: inline-block;
   cursor: pointer;
+  padding-left: 1px;
+  padding-top: 1px;
 }
 
-.CodeMirror-contextactions-gutter-marker-default {
+.CodeMirror-contextactions-gutter-marker-type-default {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAclBMVEX///87OzvMqgA7OzvMqgDOrAA7OzvOrADPrQDOrADPrADMqgBFQzY+Pj7OrADOrADTsADOqwDZtgDatwDTsADWswDOrADUsgC5nxW6nxWVgBaVgBZiYmL/2AD40gCdnZ3OqwBra2vjvgD30ADkvwDivgBee4cgAAAAHXRSTlMAEBQoUGFkaWtxc3iK8PP09PX19fX19vb39/j5/HCAOPcAAAB4SURBVHhedY3bDoMgEAURqK2itoq9exa8/f8vuoml3ZdOwsNMzgb1B22d1cIPjZ+69vjzfgYwX4q0b9gZaj9X1gMxRqCze3AL2PitTiwgFvpMYAfd0s+nO3Gga6kS5es5Pd7sX6oxjJUS5CGEXIasHupMSYwxwiQbOZAJCXPHB8MAAAAASUVORK5CYII=");
+}
+
+/* This follows the same styling as 'hint' addin */
+.CodeMirror-contextactions-popup {
+  background: transparent;
+  position: absolute;
+  z-index: 10;
+  font-size: 90%;
+  max-height: 20em;
+  overflow-y: auto;
+}
+
+.CodeMirror-contextactions-popup .CodeMirror-contextactions-gutter-marker,
+.CodeMirror-contextactions-popup ul {
+  background-color: white;
+  border: 1px solid silver;
+}
+
+.CodeMirror-contextactions-popup .CodeMirror-contextactions-gutter-marker {
+  display: block;
+  padding: 0;
+  z-index: 1;
+  position: relative;
+  border-bottom: 1px solid white;
+}
+
+.CodeMirror-contextactions-popup ul {
+  list-style: none;
+  margin: 0;
+  margin-top: -1px;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.CodeMirror-contextactions-popup li {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  color: black;
+  cursor: pointer;
 }

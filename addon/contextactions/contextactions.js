@@ -11,9 +11,53 @@
     mod(CodeMirror);
 })(function(CodeMirror) {
   "use strict";
-  var GUTTER_ID = "CodeMirror-contextactions-gutter";
+  var CLASS_PREFIX = 'CodeMirror-contextactions';
+  var GUTTER_ID = CLASS_PREFIX + '-gutter';
   var Pos = CodeMirror.Pos;
 
+  function createPopup() {
+    var popup = document.createElement('div');
+    popup.className = CLASS_PREFIX + '-popup';
+    var ul = document.createElement('ul');
+    popup.appendChild(ul);
+    var body = document.getElementsByTagName('body')[0];
+
+    var visible = false;
+    return {
+      show: function(marker, actions) {
+        var markerRect = marker.getBoundingClientRect();
+        var markerClone = marker.cloneNode(true);
+        if (popup.firstChild !== ul)
+          popup.removeChild(popup.firstChild);
+
+        popup.insertBefore(markerClone, ul);
+
+        popup.style.left = markerRect.left + 'px';
+        popup.style.top = markerRect.top + 'px';
+
+        while (ul.firstChild) {
+          ul.removeChild(ul.firstChild);
+        }
+        for (var i = 0; i < actions.length; i++) {
+          var li = document.createElement('li');
+          li.innerText = actions[i];
+          ul.appendChild(li);
+        }
+        body.appendChild(popup);
+        visible = true;
+      },
+
+      hide: function() {
+        if (!visible)
+          return;
+
+        body.removeChild(popup);
+        visible = false;
+      }
+    };
+  }
+
+  var popup;
   CodeMirror.defineOption("contextActions", false, function(cm, options, old) {
     if (old && old !== CodeMirror.Init) {
 
@@ -23,10 +67,27 @@
     var line = 0;
     var type = "default";
     var marker = document.createElement("div");
-    marker.className = "CodeMirror-contextactions-gutter-marker CodeMirror-contextactions-gutter-marker-" + type;
+    marker.className = CLASS_PREFIX + '-gutter-marker ' + CLASS_PREFIX + '-gutter-marker-type-' + type;
 
     setTimeout(function() {
       cm.setGutterMarker(line, GUTTER_ID, marker);
     }, 0);
+
+    cm.on('gutterClick', function(cm, lineNumber, gutter) {
+      if (gutter !== GUTTER_ID)
+        return;
+
+      var info = cm.lineInfo(lineNumber);
+      var marker = info.gutterMarkers[GUTTER_ID];
+      if (!marker)
+        return;
+
+      popup = popup || createPopup();
+      popup.show(marker, ['Convert to arrow function']);
+    });
+
+    cm.on('blur', function() {
+      popup.hide();
+    });
   });
 });
