@@ -50,22 +50,22 @@ function getActions(cm, pos) {
     return;
 
   var actions = [];
-  if (node.kind !== 'let')
-    actions.push(actionConvertTo('let', node));
-  if (node.kind !== 'const')
-    actions.push(actionConvertTo('const', node));
-  if (node.kind !== 'var')
-    actions.push(actionConvertTo('var', node));
+  addConvertTo(actions, node, 'let');
+  addConvertTo(actions, node, 'const');
+  addConvertTo(actions, node, 'var');
   return actions;
 }
 
-function actionConvertTo(newKind, node) {
-  return {
+function addConvertTo(actions, node, newKind) {
+  if (node.kind === newKind)
+    return;
+
+  actions.push({
     text: 'Convert to ' + newKind,
     action: function(cm) {
       cm.replaceRange(newKind, cm.posFromIndex(node.start), cm.posFromIndex(node.start + node.kind.length));
     }
-  };
+  });
 }
     </textarea>
     <script>eval(document.getElementById("code").value);</script>

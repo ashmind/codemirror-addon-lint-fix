@@ -12,7 +12,7 @@
 })(function(CodeMirror) {
   "use strict";
   var CLASS_PREFIX = 'CodeMirror-contextactions';
-  var GUTTER_ID = CLASS_PREFIX + '-gutter';
+  var DEFAULT_GUTTER_ID = CLASS_PREFIX + '-gutter';
   var Pos = CodeMirror.Pos;
 
   function createPopup() {
@@ -108,9 +108,10 @@
     }
 
     if (!options) return;
+    var gutterId = options.gutter || DEFAULT_GUTTER_ID;
     popup = createPopup();
     cm.on('gutterClick', function(cm, line, gutter) {
-      if (gutter !== GUTTER_ID)
+      if (gutter !== gutterId)
         return;
 
       if (line !== markerLine)
@@ -122,20 +123,20 @@
     cm.on('cursorActivity', function() {
       var cursor = cm.getCursor();
       actions = options.getActions(cm, cursor);
-      //popup.hide();
+      popup.hide();
       if (markerLine != null) {
-        cm.setGutterMarker(markerLine, GUTTER_ID, null);
+        cm.setGutterMarker(markerLine, gutterId, null);
       }
 
       if (actions) {
         marker = marker || createMarker();
-        cm.setGutterMarker(cursor.line, GUTTER_ID, marker);
+        cm.setGutterMarker(cursor.line, gutterId, marker);
         markerLine = cursor.line;
       }
     });
 
     var blurCloseTimer;
-    cm.on("blur", function() { blurCloseTimer = setTimeout(function() { popup.close(); }, 100); });
+    cm.on("blur", function() { blurCloseTimer = setTimeout(function() { popup.hide(); }, 100); });
     cm.on("focus", function() { clearTimeout(blurCloseTimer); });
   });
 });
