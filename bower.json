@@ -1,0 +1,21 @@
+{
+  "name": "codemirror-addon-contextaction",
+  "authors": [
+    "Andrey Shchekin <ashmind@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "demo",
+    "doc",
+    "pdns"
+  ],
+  "dependencies": {
+    "codemirror": "^5.19.0"
+  }
+}
