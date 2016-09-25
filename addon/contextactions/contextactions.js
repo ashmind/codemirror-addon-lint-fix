@@ -19,6 +19,7 @@
     var popup = document.createElement('div');
     popup.className = CLASS_PREFIX + '-popup';
     var ul = document.createElement('ul');
+    ul.className = CLASS_PREFIX + '-list';
     popup.appendChild(ul);
     var body = document.getElementsByTagName('body')[0];
 
@@ -40,6 +41,7 @@
         }
         for (var i = 0; i < actions.length; i++) {
           var li = document.createElement('li');
+          li.className = CLASS_PREFIX + '-action';
           li.innerText = actions[i];
           ul.appendChild(li);
         }
@@ -57,6 +59,12 @@
     };
   }
 
+  function createMarker(type) {
+    var marker = document.createElement("div");
+    marker.className = CLASS_PREFIX + '-gutter-marker ' + CLASS_PREFIX + '-gutter-marker-type-' + type;
+    return marker;
+  }
+
   var popup;
   CodeMirror.defineOption("contextActions", false, function(cm, options, old) {
     if (old && old !== CodeMirror.Init) {
@@ -64,13 +72,9 @@
     }
 
     if (!options) return;
-    var line = 0;
-    var type = "default";
-    var marker = document.createElement("div");
-    marker.className = CLASS_PREFIX + '-gutter-marker ' + CLASS_PREFIX + '-gutter-marker-type-' + type;
-
     setTimeout(function() {
-      cm.setGutterMarker(line, GUTTER_ID, marker);
+      cm.setGutterMarker(0, GUTTER_ID, createMarker('default'));
+      cm.setGutterMarker(1, GUTTER_ID, createMarker('default'));
     }, 0);
 
     cm.on('gutterClick', function(cm, lineNumber, gutter) {
@@ -84,6 +88,10 @@
 
       popup = popup || createPopup();
       popup.show(marker, ['Convert to arrow function']);
+    });
+
+    cm.on('cursorActivity', function() {
+      popup.hide();
     });
 
     cm.on('blur', function() {

@@ -37,7 +37,7 @@ option to <code>"sublime"</code>.</p>
 <p>(A lot of the search functionality is still missing.)
 
 <script>
-  var value = "function test() {}";
+  var value = "function test() {}\r\ntest(1);";
   var editor = CodeMirror(document.body.getElementsByTagName("article")[0], {
     value: value,
     lineNumbers: true,
