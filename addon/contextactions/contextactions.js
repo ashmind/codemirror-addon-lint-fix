@@ -59,39 +59,46 @@
     };
   }
 
-  function createMarker(type) {
+  function createMarker() {
     var marker = document.createElement("div");
-    marker.className = CLASS_PREFIX + '-gutter-marker ' + CLASS_PREFIX + '-gutter-marker-type-' + type;
+    marker.className = CLASS_PREFIX + '-gutter-marker ' + CLASS_PREFIX + '-gutter-marker-type-default';
     return marker;
   }
 
   var popup;
+  var marker;
+  var markerLine;
+  var actions;
   CodeMirror.defineOption("contextActions", false, function(cm, options, old) {
     if (old && old !== CodeMirror.Init) {
 
     }
 
     if (!options) return;
-    setTimeout(function() {
-      cm.setGutterMarker(0, GUTTER_ID, createMarker('default'));
-      cm.setGutterMarker(1, GUTTER_ID, createMarker('default'));
-    }, 0);
-
-    cm.on('gutterClick', function(cm, lineNumber, gutter) {
+    popup = createPopup();
+    cm.on('gutterClick', function(cm, line, gutter) {
       if (gutter !== GUTTER_ID)
         return;
 
-      var info = cm.lineInfo(lineNumber);
-      var marker = info.gutterMarkers[GUTTER_ID];
-      if (!marker)
+      if (line !== markerLine)
         return;
 
-      popup = popup || createPopup();
-      popup.show(marker, ['Convert to arrow function']);
+      popup.show(marker, actions);
     });
 
     cm.on('cursorActivity', function() {
+      var cursor = cm.getCursor();
+      actions = options.getActions(cm, cursor);
       popup.hide();
+      if (markerLine != null) {
+        cm.setGutterMarker(markerLine, GUTTER_ID, null);
+      }
+
+      if (actions) {
+        marker = marker || createMarker();
+        cm.setGutterMarker(cursor.line, GUTTER_ID, marker);
+        markerLine = cursor.line;
+      }
     });
 
     cm.on('blur', function() {

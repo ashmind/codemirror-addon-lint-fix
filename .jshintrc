@@ -6,6 +6,7 @@
     "CodeMirror": false
   },
   "eqeqeq":    true,
+  "eqnull":    true,
   "futurehostile": true,
   "latedef":   "nofunc",
   "noarg":     true,
