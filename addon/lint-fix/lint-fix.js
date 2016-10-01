@@ -128,7 +128,7 @@
 
       var getFixes = options.getFixes || cm.getHelper(CodeMirror.Pos(0, 0), "lintFix");
       var fixes = getFixes(cm, line, annotations);
-      if (!fixes && fixes.length === 0)
+      if (!fixes || fixes.length === 0)
         return;
 
       popup.show(cm, marker, line, fixes);
