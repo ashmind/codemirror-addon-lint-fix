@@ -1,0 +1,47 @@
+/* This follows the same styling as 'hint' addin */
+.CodeMirror-lintfix-popup {
+  background: transparent;
+  position: absolute;
+  z-index: 10;
+  font-size: 90%;
+  max-height: 20em;
+  overflow-y: auto;
+}
+
+.CodeMirror-lintfix-popup > :first-child,
+.CodeMirror-lintfix-list {
+  background-color: white;
+  border: 1px solid silver;
+  border-radius: 3px;
+}
+
+.CodeMirror-lintfix-popup > :first-child {
+  display: block;
+  padding: 0;
+  z-index: 1;
+  position: relative;
+  border-bottom: 1px solid white;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.CodeMirror-lintfix-list {
+  list-style: none;
+  margin: 0;
+  margin-top: -1px;
+  padding: 2px;
+  border-top-left-radius: 0;
+}
+
+.CodeMirror-lintfix-fix {
+  margin: 0;
+  padding: 0 4px;
+  border-radius: 2px;
+  white-space: pre;
+  color: black;
+  cursor: pointer;
+}
+
+.CodeMirror-lintfix-fix:hover {
+  background-color: #eee;
+}

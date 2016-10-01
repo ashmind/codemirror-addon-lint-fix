@@ -1,7 +1,0 @@
-{
-  "private": true,
-  "dependencies": {
-    "acorn": "^4.0.3",
-    "codemirror": "^5.19.0"
-  }
-}

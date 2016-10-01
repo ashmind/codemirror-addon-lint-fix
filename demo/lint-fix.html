@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <title>CodeMirror: Lint fix demo</title>
+  <meta charset="utf-8"/>
+  <link rel=stylesheet href="../doc/docs.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/addon/lint/lint.css">
+  <link rel="stylesheet" href="../addon/lint-fix/lint-fix.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.3/jshint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/mode/javascript/javascript.js"></script>
+  <script src="../addon/lint/lint.js"></script>
+  <script src="../addon/lint/javascript-lint.js"></script>
+  <script src="../addon/lint-fix/lint-fix.js"></script>
+  <style type="text/css">
+    .CodeMirror {border-top: 1px solid #eee; border-bottom: 1px solid #eee; line-height: 1.3; height: 500px}
+  </style>
+</head>
+<body>
+  <div id=nav>
+    <a href="http://codemirror.net"><h1>CodeMirror</h1></a>
+    <ul>
+      <li><a class=active href="#">Lint Fix</a>
+    </ul>
+  </div>
+
+  <article>
+    <h2>Lint Fix demo</h2>
+    <textarea id="code">
+var x = {a:5};;
+var y = x['a'];</textarea>
+    <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      lineNumbers: true,
+      mode: "text/javascript",
+      gutters: ["CodeMirror-lint-markers"],
+      lint: true,
+      lintFix: {
+        getFixes: function(cm, line, annotations) {
+          var fixes = [];
+          var codeHandled = {};
+          for (var i = 0; i < annotations.length; i++) {
+            var annotation = annotations[i];
+            var jshint = annotation.jshint;
+            if (!jshint || codeHandled[jshint.code]) continue;
+            if (jshint.code === "W032") {
+              fixes.push({
+                text: "Remove unnecessary semicolons",
+                apply: removeSemicolons,
+                annotations: annotations
+              });
+            }
+
+            fixes.push({
+              render: renderSuppression,
+              apply: applySuppression,
+              jshint: jshint
+            });
+            codeHandled[jshint.code] = true;
+          }
+          return fixes;
+        }
+      }
+    });
+
+    function removeSemicolons(cm, line, fix) {
+      var ordered = fix.annotations.slice(0);
+      ordered.sort(function(a, b) { return Math.sign(a.from.ch - b.from.ch); });
+      for (var i = ordered.length - 1; i >= 0; i--) {
+        cm.replaceRange("", ordered[i].from, ordered[i].to, "+lint-fix-js");
+      }
+    }
+
+    function renderSuppression(parent, fix) {
+      var genericMessageHtml = fix.jshint.raw.replace(/\.$/,'').replace('{a}', '<i>value</i>');
+      parent.innerHTML = "Suppress " + fix.jshint.code + " (" + genericMessageHtml + ")";
+    }
+
+    function applySuppression(cm, line, fix) {
+      var lineContent = cm.getLine(line);
+      cm.replaceRange("\r\n/*jshint +" + fix.jshint.code + " */", {line:line, ch:lineContent.length}, null,"+lint-fix-js");
+      cm.replaceRange("/*jshint -" + fix.jshint.code + " */\r\n", {line:line, ch:0}, null,"+lint-fix-js");
+    }
+    </script>
+  </article>
+</body>
