@@ -53,11 +53,13 @@ var y = x['a'];</textarea>
               });
             }
 
-            fixes.push({
-              render: renderSuppression,
-              apply: applySuppression,
-              jshint: jshint
-            });
+            if (/^W/.test(jshint.code)) {
+              fixes.push({
+                render: renderSuppression,
+                apply: applySuppression,
+                jshint: jshint
+              });
+            }
             codeHandled[jshint.code] = true;
           }
           return fixes;
@@ -80,8 +82,8 @@ var y = x['a'];</textarea>
 
     function applySuppression(cm, line, fix) {
       var lineContent = cm.getLine(line);
-      cm.replaceRange("\r\n/*jshint +" + fix.jshint.code + " */", {line:line, ch:lineContent.length}, null,"+lint-fix-js");
-      cm.replaceRange("/*jshint -" + fix.jshint.code + " */\r\n", {line:line, ch:0}, null,"+lint-fix-js");
+      cm.replaceRange("\r\n/*jshint +" + fix.jshint.code + " */", {line:line, ch:lineContent.length}, null, "+lint-fix-js");
+      cm.replaceRange("/*jshint -" + fix.jshint.code + " */\r\n", {line:line, ch:0}, null, "+lint-fix-js");
     }
     </script>
   </article>

@@ -19,6 +19,7 @@
     var currentLine;
     var currentFixes;
 
+    var popupMarker;
     var popup = document.createElement("div");
     popup.className = CLASS_PREFIX + "-popup";
     var ul = document.createElement("ul");
@@ -53,18 +54,20 @@
 
     var visible = false;
     function show(cm, marker, line, fixes) {
+      hide();
+
       currentEditor = cm;
       currentFixes = fixes;
       currentLine = line;
-      var markerRect = marker.getBoundingClientRect();
-      var markerClone = marker.cloneNode(true);
-      if (popup.firstChild !== ul)
-        popup.removeChild(popup.firstChild);
 
-      popup.insertBefore(markerClone, ul);
+      var markerRect = marker.getBoundingClientRect();
+      popupMarker = marker.cloneNode(true);
+      popupMarker.className += " " + CLASS_PREFIX + "-popup-marker";
+      popupMarker.style.left = markerRect.left + "px";
+      popupMarker.style.top = markerRect.top + "px";
 
       popup.style.left = markerRect.left + "px";
-      popup.style.top = markerRect.top + "px";
+      popup.style.top = markerRect.bottom + "px";
 
       while (ul.firstChild) {
         ul.removeChild(ul.firstChild);
@@ -82,6 +85,7 @@
         li.fixIndex = i;
         ul.appendChild(li);
       }
+      body.appendChild(popupMarker);
       body.appendChild(popup);
       visible = true;
     }
@@ -90,6 +94,7 @@
       if (!visible)
         return;
 
+      body.removeChild(popupMarker);
       body.removeChild(popup);
       visible = false;
     }
@@ -128,6 +133,8 @@
 
       popup.show(cm, marker, line, fixes);
     });
+
+    cm.on('cursorActivity', function() { popup.hide(); });
 
     var blurCloseTimer;
     cm.on("blur", function() { blurCloseTimer = setTimeout(function() { popup.hide(); }, 100); });

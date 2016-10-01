@@ -1,4 +1,12 @@
 /* This follows the same styling as 'hint' addin */
+
+.CodeMirror-lintfix-popup,
+.CodeMirror-lintfix-popup-marker {
+  margin-left: -1px;
+  border: 1px solid silver;
+  border-radius: 3px;
+}
+
 .CodeMirror-lintfix-popup {
   background: transparent;
   position: absolute;
@@ -6,31 +14,29 @@
   font-size: 90%;
   max-height: 20em;
   overflow-y: auto;
+  -webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  -moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+  border-top-left-radius: 0;
 }
 
-.CodeMirror-lintfix-popup > :first-child,
-.CodeMirror-lintfix-list {
-  background-color: white;
-  border: 1px solid silver;
-  border-radius: 3px;
-}
-
-.CodeMirror-lintfix-popup > :first-child {
+.CodeMirror-lintfix-popup-marker {
   display: block;
   padding: 0;
-  z-index: 1;
-  position: relative;
+  z-index: 11;
+  position: absolute;
+  margin-top: -1px;
+  background-color: white;
   border-bottom: 1px solid white;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
 .CodeMirror-lintfix-list {
+  background-color: white;
   list-style: none;
   margin: 0;
-  margin-top: -1px;
   padding: 2px;
-  border-top-left-radius: 0;
 }
 
 .CodeMirror-lintfix-fix {
