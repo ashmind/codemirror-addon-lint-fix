@@ -53,6 +53,7 @@
     }
 
     var visible = false;
+    var justAppeared = false;
     function show(cm, marker, line, fixes) {
       hide();
 
@@ -88,6 +89,8 @@
       body.appendChild(popupMarker);
       body.appendChild(popup);
       visible = true;
+      justAppeared = true;
+      setTimeout(function() { justAppeared = false; }, 100);
     }
 
     function hide() {
@@ -97,7 +100,22 @@
       body.removeChild(popupMarker);
       body.removeChild(popup);
       visible = false;
+      justAppeared = false;
     }
+
+    CodeMirror.on(document, 'click', function(e) {
+      if (!visible || justAppeared)
+        return;
+
+      var target = e.target || e.srcElement;
+      var element = target.parentElement;
+      while (element) {
+        if (element === popup)
+          return;
+        element = element.parentNode;
+      }
+      hide();
+    });
 
     return {
       show: show,
@@ -133,11 +151,5 @@
 
       popup.show(cm, marker, line, fixes);
     });
-
-    cm.on('cursorActivity', function() { popup.hide(); });
-
-    var blurCloseTimer;
-    cm.on("blur", function() { blurCloseTimer = setTimeout(function() { popup.hide(); }, 100); });
-    cm.on("focus", function() { clearTimeout(blurCloseTimer); });
   });
 });
