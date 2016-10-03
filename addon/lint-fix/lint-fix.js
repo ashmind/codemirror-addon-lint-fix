@@ -90,7 +90,7 @@
       body.appendChild(popup);
       visible = true;
       justAppeared = true;
-      setTimeout(function() { justAppeared = false; }, 100);
+      setTimeout(function() { justAppeared = false; }, 400);
     }
 
     function hide() {
@@ -125,8 +125,8 @@
 
   var popup;
   CodeMirror.defineOption("lintFix", false, function(cm, options, old) {
-    if (old && old !== CodeMirror.Init) {
-
+    if (old !== CodeMirror.Init) {
+      throw new Error('Option changes are not yet implemented.');
     }
 
     if (!options) return;
