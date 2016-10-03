@@ -20,7 +20,8 @@
   border-top-left-radius: 0;
 }
 
-.CodeMirror-lintfix-popup-marker {
+/* slight priority boost over custom marker styles which normally include relative position */
+.CodeMirror-lintfix-popup-marker.CodeMirror-lintfix-popup-marker {
   display: block;
   padding: 0;
   z-index: 11;
