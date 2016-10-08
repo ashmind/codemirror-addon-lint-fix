@@ -28,51 +28,62 @@
 
   <article>
     <h2>Lint Fix demo</h2>
-    <textarea id="code">
-var x = {a:5};;
-var y = x['a'];</textarea>
-    <script>
+    <textarea id="code"></textarea>
+    <script id="code-script">
+    /* jshint -W033 */
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
       lineNumbers: true,
       mode: "text/javascript",
       gutters: ["CodeMirror-lint-markers"],
       lint: true,
-      lintFix: {
-        getFixes: function(cm, line, annotations) {
-          var fixes = [];
-          var codeHandled = {};
-          for (var i = 0; i < annotations.length; i++) {
-            var annotation = annotations[i];
-            var jshint = annotation.jshint;
-            if (!jshint || codeHandled[jshint.code]) continue;
-            if (jshint.code === "W032") {
-              fixes.push({
-                text: "Remove unnecessary semicolons",
-                apply: removeSemicolons,
-                annotations: annotations
-              });
-            }
-
-            if (/^W/.test(jshint.code)) {
-              fixes.push({
-                render: renderSuppression,
-                apply: applySuppression,
-                jshint: jshint
-              });
-            }
-            codeHandled[jshint.code] = true;
-          }
-          return fixes;
-        }
-      }
+      lintFix: { getFixes: getFixes }
     });
+    editor.setValue(getCodeForDemo());
 
-    function removeSemicolons(cm, line, fix) {
+    function getFixes(cm, line, annotations) {
+      var fixes = [];
+      var codeHandled = {};
+      for (var i = 0; i < annotations.length; i++) {
+        var annotation = annotations[i];
+        var jshint = annotation.jshint;
+        if (!jshint || codeHandled[jshint.code]) continue;
+        if (jshint.code === "W032") {
+          fixes.push({
+            text: "Remove unnecessary semicolons",
+            apply: removeAnnotatedCode,
+            annotations: annotations
+          });/*demo:;;;*/
+        }
+        else if (jshint.code === "W087") {
+          fixes.push({
+            text: "Remove debugger statement",
+            apply: removeAnnotatedCode,
+            annotations: annotations
+          });
+          /*demo:debugger*/
+        }
+
+        if (/^W/.test(jshint.code)) {
+          fixes.push({
+            render: renderSuppression,
+            apply: applySuppression,
+            jshint: jshint
+          });
+        }
+        codeHandled[jshint.code] = true;
+      }
+      return fixes;
+    }
+
+    function removeAnnotatedCode(cm, line, fix) {
       var ordered = fix.annotations.slice(0);
       ordered.sort(function(a, b) { return Math.sign(a.from.ch - b.from.ch); });
       for (var i = ordered.length - 1; i >= 0; i--) {
         cm.replaceRange("", ordered[i].from, ordered[i].to, "+lint-fix-js");
       }
+      var lineContent = cm.getLine(line);
+      if (!/\S/.test(lineContent))
+        cm.replaceRange("", CodeMirror.Pos(line-1), CodeMirror.Pos(line), "+lint-fix-js");
     }
 
     function renderSuppression(parent, fix) {
@@ -82,8 +93,18 @@ var y = x['a'];</textarea>
 
     function applySuppression(cm, line, fix) {
       var lineContent = cm.getLine(line);
-      cm.replaceRange("\r\n/*jshint +" + fix.jshint.code + " */", {line:line, ch:lineContent.length}, null, "+lint-fix-js");
-      cm.replaceRange("/*jshint -" + fix.jshint.code + " */\r\n", {line:line, ch:0}, null, "+lint-fix-js");
+      var indent = lineContent.match(/^\s*/)[0];
+      cm.replaceRange("\r\n" + indent + "/*jshint +" + fix.jshint.code + " */", {line:line, ch:lineContent.length}, null, "+lint-fix-js");
+      cm.replaceRange(indent + "/*jshint -" + fix.jshint.code + " */\r\n", {line:line, ch:0}, null, "+lint-fix-js");
+    }
+
+    function getCodeForDemo() {
+      var script = document.getElementById('code-script');
+      var scriptText = script.textContent || script.innerText;
+      return scriptText
+        .replace(/^    /mg, '')
+        .replace(/^\s+|\s+$/g, '')
+        .replace(/\/\*demo:([^*]+)\*\//g, '$1');
     }
     </script>
   </article>

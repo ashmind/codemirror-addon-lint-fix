@@ -49,6 +49,7 @@
       var fix = currentFixes[index];
       fix.apply(cm, currentLine, fix);
       hide();
+      cm.performLint();
       cm.focus();
     }
 
