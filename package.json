@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "gh-pages-travis": "^1.0.0"
+  },
+  "scripts": {
+    "gh-pages-travis": "gh-pages-travis"
+  }
+}
