@@ -103,7 +103,7 @@
       justAppeared = false;
     }
 
-    CodeMirror.on(document, 'click', function(e) {
+    CodeMirror.on(document, "click", function(e) {
       if (!visible || justAppeared)
         return;
 
@@ -124,32 +124,76 @@
   }
 
   var popup;
-  CodeMirror.defineOption("lintFix", false, function(cm, options, old) {
-    if (old !== CodeMirror.Init) {
-      throw new Error('Option changes are not yet implemented.');
-    }
-
-    if (!options) return;
-    popup = createPopup();
-    cm.on("gutterClick", function(cm, line, gutter) {
-      if (gutter !== GUTTER_ID)
+  function getLintMarker(cm, line) {
+      var info = cm.lineInfo(line);
+      if (!info.gutterMarkers)
         return;
 
-      var info = cm.lineInfo(line);
-      var marker = info.gutterMarkers[gutter];
+      return info.gutterMarkers[GUTTER_ID];
+  }
+
+  function onUpdateLinting(_, annotationsByLine, cm) {
+    var state = cm.state.lintFix;
+    state.annotationsByLine = annotationsByLine;
+    for (var line = 0; line < annotationsByLine.length; line += 1) {
+      var annotations = annotationsByLine[line];
+      if (!annotations)
+        continue;
+
+      var marker = getLintMarker(cm, line);
       if (!marker)
         return;
 
-      var annotations = cm.getLintAnnotations(line);
-      if (annotations.length === 0)
-        return;
-
-      var getFixes = options.getFixes || cm.getHelper(CodeMirror.Pos(0, 0), "lintFix");
+      var getFixes = cm.getOption("lintFix").getFixes || cm.getHelper(CodeMirror.Pos(0, 0), "lintFix");
       var fixes = getFixes(cm, line, annotations);
       if (!fixes || fixes.length === 0)
         return;
 
-      popup.show(cm, marker, line, fixes);
-    });
+      marker.className += " " + CLASS_PREFIX + "-marker-fixable";
+      state.fixesByLine[line] = fixes;
+    }
+  }
+
+  function onGutterClick(cm, line, gutter) {
+    if (gutter !== GUTTER_ID)
+      return;
+
+    var fixes = cm.state.lintFix.fixesByLine[line];
+    if (!fixes)
+      return;
+
+    var marker = getLintMarker(cm, line);
+    if (!marker)
+      return;
+
+    popup.show(cm, marker, line, fixes);
+  }
+
+  CodeMirror.defineOption("lintFix", false, function(cm, options, old) {
+    if (old !== CodeMirror.Init) {
+      throw new Error("Option changes are not yet implemented.");
+    }
+
+    if (!options)
+      return;
+
+    if (!popup)
+      popup = createPopup();
+    cm.state.lintFix = {fixesByLine:{}};
+
+    var lint = cm.getOption("lint");
+    if (typeof lint === "boolean") {
+      lint = {};
+      cm.setOption("lint", lint);
+    }
+
+    var previousOnUpdateLinting = lint.onUpdateLinting;
+    lint.onUpdateLinting = function() {
+      if (previousOnUpdateLinting)
+        previousOnUpdateLinting();
+      onUpdateLinting.apply(this, arguments);
+    };
+    cm.performLint();
+    cm.on("gutterClick", onGutterClick);
   });
 });

@@ -1,5 +1,17 @@
 /* This follows the same styling as 'hint' addin */
 
+.CodeMirror-lintfix-marker-fixable::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0.9;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMTJDBGvsAAAApUlEQVQ4T+WQPQoDIRCFPUkuIVh7Am/qARRtPYBVrmC3WySkcrKzMPCWFZG0KT5kHr7PH0VPNYdoynXz+3FnUEL+TRBC2EspnxjjPhdASai1vlprm8Az50sCPhnLAudLAr72SMD5koDfzAXvfceV8yUBI38g5fkfICBJKfVDQDnnLtlVMAIExhhyzpHW+hh/EFhrSZBsXEJAcBbOCOZhCYHNd0h9AVy7i1g5dVOKAAAAAElFTkSuQmCC);
+  image-rendering: pixelated;
+}
+
 .CodeMirror-lintfix-popup,
 .CodeMirror-lintfix-popup-marker {
   margin-left: -1px;
