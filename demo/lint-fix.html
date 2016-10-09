@@ -40,37 +40,51 @@
     });
     editor.setValue(getCodeForDemo());
 
+    function makeFix(code) {
+      switch (code) {
+        case "W032":
+          /*demo:;;;*/
+          return {
+            text: "Remove unnecessary semicolons",
+            apply: removeAnnotatedCode
+          };
+        case "W087":
+          /*demo:debugger*/
+          return {
+            text: "Remove debugger statement",
+            apply: removeAnnotatedCode
+          };
+      }
+    }
+
     function getFixes(cm, line, annotations) {
-      var fixes = [];
-      var codeHandled = {};
+      var annotationsByCode = {};
       for (var i = 0; i < annotations.length; i++) {
         var annotation = annotations[i];
         var jshint = annotation.jshint;
-        if (!jshint || codeHandled[jshint.code]) continue;
-        if (jshint.code === "W032") {
-          fixes.push({
-            text: "Remove unnecessary semicolons",
-            apply: removeAnnotatedCode,
-            annotations: annotations
-          });/*demo:;;;*/
-        }
-        else if (jshint.code === "W087") {
-          fixes.push({
-            text: "Remove debugger statement",
-            apply: removeAnnotatedCode,
-            annotations: annotations
-          });
-          /*demo:debugger*/
-        }
+        if (!jshint) continue;
 
-        if (/^W/.test(jshint.code)) {
-          fixes.push({
-            render: renderSuppression,
-            apply: applySuppression,
-            jshint: jshint
-          });
-        }
-        codeHandled[jshint.code] = true;
+        var code = jshint.code;
+        if (!annotationsByCode[code])
+          annotationsByCode[code] = [];
+        annotationsByCode[code].push(annotation);
+      }
+
+      var fixes = [];
+      for (var code in annotationsByCode) {
+        var fix = makeFix(code);
+        if (!fix) continue;
+        fix.annotations = annotationsByCode[code];
+        fixes.push(fix);
+      }
+
+      for (var code in annotationsByCode) {
+        if (!/^W/.test(code)) continue;
+        fixes.push({
+          text: "Suppress " + code + " (" + annotationsByCode[code][0].message.replace(/[?.]$/, "") + ")",
+          apply: applySuppression,
+          code: code
+        });
       }
       return fixes;
     }
@@ -86,16 +100,11 @@
         cm.replaceRange("", CodeMirror.Pos(line-1), CodeMirror.Pos(line), "+lint-fix-js");
     }
 
-    function renderSuppression(parent, fix) {
-      var genericMessageHtml = fix.jshint.raw.replace(/\.$/,'').replace('{a}', '<i>value</i>');
-      parent.innerHTML = "Suppress " + fix.jshint.code + " (" + genericMessageHtml + ")";
-    }
-
     function applySuppression(cm, line, fix) {
       var lineContent = cm.getLine(line);
       var indent = lineContent.match(/^\s*/)[0];
-      cm.replaceRange("\r\n" + indent + "/*jshint +" + fix.jshint.code + " */", {line:line, ch:lineContent.length}, null, "+lint-fix-js");
-      cm.replaceRange(indent + "/*jshint -" + fix.jshint.code + " */\r\n", {line:line, ch:0}, null, "+lint-fix-js");
+      cm.replaceRange("\r\n" + indent + "/*jshint +" + fix.code + " */", CodeMirror.Pos(line, lineContent.length), null, "+lint-fix-js");
+      cm.replaceRange(indent + "/*jshint -" + fix.code + " */\r\n", CodeMirror.Pos(line, 0), null, "+lint-fix-js");
     }
 
     function getCodeForDemo() {
