@@ -2,6 +2,7 @@
   "name": "codemirror-addon-lint-fix",
   "version": "0.0.0-pre",
   "description": "",
+  "main": "addon/lint-fix/lint-fix.js", 
   "dependencies": {
     "codemirror": "^5.18.2"
   },
