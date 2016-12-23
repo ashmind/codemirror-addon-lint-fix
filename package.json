@@ -1,0 +1,17 @@
+{
+  "name": "codemirror-addon-lint-fix",
+  "version": "0.0.0-pre",
+  "description": "",
+  "dependencies": {
+    "codemirror": "^5.18.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashmind/codemirror-addon-lint-fix.git"
+  },
+  "author": "ashmind",
+  "bugs": {
+    "url": "https://github.com/ashmind/codemirror-addon-lint-fix/issues"
+  },
+  "homepage": "https://github.com/ashmind/codemirror-addon-lint-fix#readme"
+}
