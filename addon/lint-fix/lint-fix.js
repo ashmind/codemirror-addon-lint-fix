@@ -4,9 +4,9 @@
 (function(mod) {
   "use strict";
   if (typeof exports === "object" && typeof module === "object") // CommonJS
-    mod(require("codemirror"));
+    mod(require("codemirror"), require("codemirror/addon/lint/lint"));
   else if (typeof define === "function" && define.amd) // AMD
-    define(["codemirror"], mod);
+    define(["codemirror", "codemirror/addon/lint/lint"], mod);
   else // Plain browser env
     mod(CodeMirror);
 })(function(CodeMirror) {
