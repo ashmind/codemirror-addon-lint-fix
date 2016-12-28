@@ -13,11 +13,14 @@
   "use strict";
   var GUTTER_ID = "CodeMirror-lint-markers";
   var CLASS_PREFIX = "CodeMirror-lintfix";
+  var CLASS_MARKER = CLASS_PREFIX + "-marker-fixable";
+  var CLASS_SELECTED = CLASS_PREFIX + "-fix-selected";
 
   function createPopup() {
     var currentEditor;
     var currentLine;
     var currentFixes;
+    var selectedIndex;
 
     var popupMarker;
     var popup = document.createElement("div");
@@ -25,23 +28,47 @@
     var ul = document.createElement("ul");
     ul.className = CLASS_PREFIX + "-list";
     CodeMirror.on(ul, "click", function(e) {
-      var li = findLI(e.target || e.srcElement);
-      if (!li || li.fixIndex == null)
-        return;
-
-      applyFix(li.fixIndex);
+      findFixIndexAndCall(applyFix, e.target || e.srcElement);
+    });
+    CodeMirror.on(ul, "mouseover", function(e) {
+      findFixIndexAndCall(selectFix, e.target || e.srcElement);
     });
     popup.appendChild(ul);
     var body = document.getElementsByTagName("body")[0];
 
-    function findLI(element) {
+    var keyMap = {
+      Up: function() { selectFix(selectedIndex-1); },
+      Down: function() { selectFix(selectedIndex+1); },
+      Esc: hide,
+      Enter: function() { applyFix(selectedIndex); }
+    };
+
+    function findFixIndexAndCall(action, element) {
       if (element.tagName === "LI")
-        return element;
+        return action(element.fixIndex);
 
       if (element.tagName === "UL")
         return null;
 
-      return findLI(element.parentNode);
+      return findFixIndexAndCall(action, element.parentNode);
+    }
+
+    function selectFix(index) {
+      if (index === selectedIndex)
+        return;
+
+      var li = ul.children[selectedIndex];
+      if (li)
+        li.className = li.className.replace(CLASS_SELECTED, '');
+
+      selectedIndex = index;
+      if (selectedIndex < 0) {
+        selectedIndex = currentFixes.length - 1;
+      }
+      else if (selectedIndex > currentFixes.length - 1) {
+        selectedIndex = 0;
+      }
+      ul.children[selectedIndex].className += ' ' + CLASS_SELECTED;
     }
 
     function applyFix(index) {
@@ -61,6 +88,9 @@
       currentEditor = cm;
       currentFixes = fixes;
       currentLine = line;
+      selectedIndex = 0;
+
+      cm.addKeyMap(keyMap);
 
       var markerRect = marker.getBoundingClientRect();
       popupMarker = marker.cloneNode(true);
@@ -78,6 +108,8 @@
         var fix = fixes[i];
         var li = document.createElement("li");
         li.className = CLASS_PREFIX + "-fix";
+        if (i === 0)
+          li.className += ' ' + CLASS_SELECTED;
         if (fix.render) {
           fix.render(li, fix);
         }
@@ -98,6 +130,7 @@
       if (!visible)
         return;
 
+      currentEditor.removeKeyMap(keyMap);
       body.removeChild(popupMarker);
       body.removeChild(popup);
       visible = false;
@@ -147,18 +180,18 @@
 
       var getFixes = cm.getOption("lintFix").getFixes || cm.getHelper(CodeMirror.Pos(0, 0), "lintFix");
       var fixes = getFixes(cm, line, annotations);
-      if (!fixes || fixes.length === 0)
-        continue;
-
-      marker.className += " " + CLASS_PREFIX + "-marker-fixable";
-      state.fixesByLine[line] = fixes;
+      if (fixes && fixes.length > 0) {
+        marker.className += " " + CLASS_MARKER;
+        state.fixesByLine[line] = fixes;
+      }
+      else {
+        marker.className = marker.className.replace(CLASS_MARKER, "");
+        state.fixesByLine[line] = null;
+      }
     }
   }
 
-  function onGutterClick(cm, line, gutter) {
-    if (gutter !== GUTTER_ID)
-      return;
-
+  function showIfAvailable(cm, line) {
     var fixes = cm.state.lintFix.fixesByLine[line];
     if (!fixes)
       return;
@@ -191,10 +224,17 @@
     var previousOnUpdateLinting = lint.onUpdateLinting;
     lint.onUpdateLinting = function() {
       if (previousOnUpdateLinting)
-        previousOnUpdateLinting();
+        previousOnUpdateLinting.apply(this, arguments);
       onUpdateLinting.apply(this, arguments);
     };
     cm.performLint();
-    cm.on("gutterClick", onGutterClick);
+    cm.on("gutterClick", function(cm, line, gutter) {
+      if (gutter !== GUTTER_ID)
+        return;
+      showIfAvailable(cm, line);
+    });
   });
+  CodeMirror.commands.lintFixShow = function(cm) {
+    showIfAvailable(cm, cm.getCursor().line);
+  };
 });

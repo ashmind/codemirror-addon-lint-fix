@@ -61,6 +61,6 @@
   cursor: pointer;
 }
 
-.CodeMirror-lintfix-fix:hover {
+.CodeMirror-lintfix-fix-selected {
   background-color: #eee;
 }

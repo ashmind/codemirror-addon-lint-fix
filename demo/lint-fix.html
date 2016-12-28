@@ -29,9 +29,11 @@
   <article>
     <h2>Lint Fix demo</h2>
     <textarea id="code"></textarea>
+    <p>Press <strong>Ctrl-.</strong> while on a fixable line for keyboard access.</p>
     <script id="code-script">
     /* jshint -W033 */
     var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+      extraKeys: {"Ctrl-.": "lintFixShow"},
       lineNumbers: true,
       mode: "text/javascript",
       gutters: ["CodeMirror-lint-markers"],
