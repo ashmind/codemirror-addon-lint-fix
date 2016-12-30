@@ -3,11 +3,13 @@
 <head>
   <title>CodeMirror: Lint fix demo</title>
   <meta charset="utf-8"/>
-  <link rel=stylesheet href="../doc/docs.css">
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/addon/lint/lint.css">
   <link rel="stylesheet" href="../addon/lint-fix/lint-fix.css">
+
+  <link rel=stylesheet href="codemirror-docs.css">
+  <link rel=stylesheet href="overrides.css">
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jshint/2.9.3/jshint.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/codemirror.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/mode/javascript/javascript.js"></script>
@@ -20,14 +22,20 @@
 </head>
 <body>
   <div id=nav>
-    <a href="http://codemirror.net"><h1>CodeMirror</h1></a>
+    <a href="/">
+      <h1><span>CodeMirror</span> <span>Lint Fix</span></h1>
+      <div id="logo" class="CodeMirror-lint-marker-warning CodeMirror-lintfix-marker-fixable"></div>
+    </a>
     <ul>
-      <li><a class=active href="#">Lint Fix</a>
+      <li><a href="index.html">Home</a>
+      <li><a class=active>Demo</a>
+      <li><a href="api.html">API</a>
+      <li><a href="https://github.com/ashmind/codemirror-addon-lint-fix">Code</a>
     </ul>
   </div>
 
   <article>
-    <h2>Lint Fix demo</h2>
+    <h2>Demo</h2>
     <textarea id="code"></textarea>
     <p>Press <strong>Ctrl-.</strong> while on a fixable line for keyboard access.</p>
     <script id="code-script">

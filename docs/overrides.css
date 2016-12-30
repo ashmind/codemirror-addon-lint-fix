@@ -1,0 +1,37 @@
+#nav h1,
+#nav ul a.active, #nav ul a:hover {
+  color: #404040;
+}
+
+#nav ul a.active, #nav ul a:hover {
+  border-bottom-color: #404040;
+}
+
+article {
+  border-left-color: #404040;
+}
+
+section {
+  border-top-color: #404040;
+}
+
+h1 span {
+  display: block;
+  line-height: 1;
+}
+
+h1 span:first-child {
+  font-size: 67%;
+  letter-spacing: normal;
+}
+
+#logo {
+  width: 80px;
+  height: 80px;
+  background-size: contain;
+  image-rendering: pixelated;
+}
+
+#logo:before {
+  background-size: contain;
+}

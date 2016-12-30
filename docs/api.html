@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+  <title>CodeMirror: Lint Fix</title>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.19.0/addon/lint/lint.css">
+  <link rel="stylesheet" href="../addon/lint-fix/lint-fix.css">
+
+  <link rel=stylesheet href="codemirror-docs.css">
+  <link rel=stylesheet href="overrides.css">
+</head>
+<body>
+  <div id=nav>
+    <a href="/">
+      <h1><span>CodeMirror</span> <span>Lint Fix</span></h1>
+      <div id="logo" class="CodeMirror-lint-marker-warning CodeMirror-lintfix-marker-fixable"></div>
+    </a>
+    <ul>
+      <li><a href="index.html">Home</a>
+      <li><a href="demo.html">Demo</a>
+      <li><a class="active">API</a>
+      <li><a href="https://github.com/ashmind/codemirror-addon-lint-fix">Code</a>
+    </ul>
+  </div>
+
+  <article>
+    <section class="first">
+      <h2>Configuration</h2>
+      <p>Lint fix addon is enabled through a <code>lintFix</code> field in CodeMirror options:</p>
+      <pre>var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+    lint: true,
+    lintFix: { ... }
+});</pre>
+      <p>The addon accepts the following option:</p>
+      <dl>
+        <dt><code><strong>getFixes</strong>: function(cm, line: integer, annotations: array&lt;object&gt;) → array&lt;fix&gt;</code></dt>
+        <dd>A function that is used to get fixes for a given line. The structure of <code>fix</code> object is:
+          <pre>{
+  apply: function(cm, line: integer, fix: object),
+  text: string,
+  render: function(parent: element, fix: object) // optional
+}</pre>
+Note that addon can use <code>lintFix</code> helper (see <code><a href="https://codemirror.net/doc/manual.html#registerHelper">CodeMirror.registerHelper</a></code>) instead of <code>getFixes</code> option.
+    </dl>
+    </section>
+    <section>
+      <h2>Commands</h2>
+      <dl>
+        <dt><code><strong>lintFixShow</strong></code></dt>
+        <dd>Shows lint fix menu (if available).</dd>
+      </dl>
+    </section>
+  </article>
+</body>
