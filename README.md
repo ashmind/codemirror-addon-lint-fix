@@ -1,5 +1,5 @@
 ### Overview
-Lint Fix is a CodeMirror plugin that allows fixes to be associated with CM lint results, and provides a gutter-based UI for invoking those.
+Lint Fix is a CodeMirror addon that provides UI for quick-fixing lint issues.
 
 ### Example
 ![Example](docs/gifs/demo.gif)

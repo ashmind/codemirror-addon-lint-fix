@@ -1,8 +1,9 @@
 {
   "name": "codemirror-addon-lint-fix",
   "version": "0.0.0-pre",
-  "description": "",
-  "main": "addon/lint-fix/lint-fix.js", 
+  "description": "Lint Fix is a CodeMirror addon that provides UI for quick-fixing lint issues.",
+  "files": ["dist"],
+  "main": "dist/lint-fix.js", 
   "dependencies": {
     "codemirror": "^5.18.2"
   },
