@@ -1,5 +1,5 @@
+/*! Copyright (c) Andrey Shchekin (MIT, see LICENSE.txt)*/
 /* This follows the same styling as 'hint' addin */
-
 .CodeMirror-lintfix-marker-fixable::before {
   content: '';
   position: absolute;

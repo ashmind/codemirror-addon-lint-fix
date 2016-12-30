@@ -1,6 +1,4 @@
-// CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: http://codemirror.net/LICENSE
-
+//! Copyright (c) Andrey Shchekin (MIT, see LICENSE.txt)
 (function(mod) {
   "use strict";
   if (typeof exports === "object" && typeof module === "object") // CommonJS
