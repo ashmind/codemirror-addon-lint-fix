@@ -201,36 +201,63 @@
     popup.show(cm, marker, line, fixes);
   }
 
-  CodeMirror.defineOption("lintFix", false, function(cm, options, old) {
-    if (old !== CodeMirror.Init) {
-      throw new Error("Option changes are not yet implemented.");
-    }
-
-    if (!options)
+  function onGutterClick(cm, line, gutter) {
+    if (gutter !== GUTTER_ID)
       return;
+    showIfAvailable(cm, line);
+  }
+
+  function removeFrom(cm) {
+    var state = cm.state.lintFix;
+    if (!state)
+      return;
+
+    var saved = state.saved;
+    if (saved.lint) {
+      cm.setOption("lint", saved.lint);
+    }
+    else {
+      var lint = cm.getOption("lint");
+      if (lint)
+        lint.onUpdateLinting = saved.onUpdateLinting;
+    }
+    delete cm.state.lintFix;
+  }
+
+  CodeMirror.defineOption("lintFix", false, function(cm, options, old) {
+    if (old && old !== CodeMirror.Init) {
+      if (!options) {
+        removeFrom(cm);
+        return;
+      }
+      cm.performLint();
+      return;
+    }
 
     if (!popup)
       popup = createPopup();
-    cm.state.lintFix = {fixesByLine:{}};
+
+    var state = {
+      fixesByLine: {},
+      saved: {}
+    };
+    cm.state.lintFix = state;
 
     var lint = cm.getOption("lint");
     if (typeof lint === "boolean") {
+      state.saved.lint = lint;
       lint = {};
       cm.setOption("lint", lint);
     }
 
-    var previousOnUpdateLinting = lint.onUpdateLinting;
+    state.saved.onUpdateLinting = lint.onUpdateLinting;
     lint.onUpdateLinting = function() {
-      if (previousOnUpdateLinting)
-        previousOnUpdateLinting.apply(this, arguments);
+      if (state.saved.onUpdateLinting)
+        state.saved.onUpdateLinting.apply(this, arguments);
       onUpdateLinting.apply(this, arguments);
     };
     cm.performLint();
-    cm.on("gutterClick", function(cm, line, gutter) {
-      if (gutter !== GUTTER_ID)
-        return;
-      showIfAvailable(cm, line);
-    });
+    cm.on("gutterClick", onGutterClick);
   });
   CodeMirror.commands.lintFixShow = function(cm) {
     showIfAvailable(cm, cm.getCursor().line);
