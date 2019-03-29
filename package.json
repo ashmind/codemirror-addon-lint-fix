@@ -1,11 +1,11 @@
 {
   "name": "codemirror-addon-lint-fix",
-  "version": "1.0.1-pre-20170118",
+  "version": "1.0.1",
   "description": "Lint Fix is a CodeMirror addon that provides UI for quick-fixing lint issues.",
   "author": "Andrey Shchekin (http://github.com/ashmind)",
   "license": "MIT",
   "keywords": ["codemirror","lint"],
-  "files": ["dist","docs"],
+  "files": ["dist"],
   "main": "dist/lint-fix.js",
   "peerDependencies": {
     "codemirror": "^5.18.2"
