@@ -2,7 +2,7 @@
 Lint Fix is a CodeMirror addon that provides UI for quick-fixing lint issues.
 
 ## Example
-![Example](docs/gifs/demo.gif)
+![Example](https://raw.githubusercontent.com/ashmind/codemirror-addon-lint-fix/master/docs/gifs/demo.gif)
 
 ## Install
 ### NPM
